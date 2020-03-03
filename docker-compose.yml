@@ -1,0 +1,35 @@
+version: '2'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    build:
+      context: ./kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  consumer:
+    build:
+      context: ./consumer
+    depends_on:
+      - zookeeper
+      - kafka
+    command: ["python", "main.py"]
+    volumes:
+      - ./consumer:/app
+    tty: true
+  procuer:
+    build:
+      context: ./procuer
+    depends_on:
+      - consumer
+    command: ["python", "main.py"]
+    volumes:
+      - ./procuer:/app
+    tty: true
