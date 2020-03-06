@@ -5,7 +5,8 @@ import time
 def main():
     while True:
         try:
-            producer = KafkaProducer(bootstrap_servers='kafka:9092')
+            producer = KafkaProducer(
+                bootstrap_servers='kafka:9092')
             break
         except Exception:
             print("connection error")
